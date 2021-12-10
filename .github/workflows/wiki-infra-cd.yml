@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - run: echo {{ github.ref_name }}
+    - run: echo ${{ github.ref_name }}
     
   # wiki-infra-deploy:
   #   uses: "${{ github.repository }}/.github/workflows/wiki-infra-deploy.yml@${{ github.ref_name }}"

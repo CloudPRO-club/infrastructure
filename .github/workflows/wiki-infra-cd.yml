@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ./.github/actions/wiki-infra-deploy.yml@${{ github.ref_name }}
+      - uses: ./.github/actions/wiki-infra-deploy.yml
         with:
           who-to-greet: Anton
 

@@ -30,15 +30,19 @@
             "index": "index.html",
             "error": "error.html"
         },
-        "custom": {
-            "uniqueId": "[parameters('unique-id')]",
+        "source": {
             "repo": {
                 "path": "[parameters('scripts-repo-path')]",
                 "branch": "[parameters('scripts-repo-branch')]"
-            },
+            }
+        },
+        "assets": {
             "raw": {
-                "path": "[replace(variables('custom').repo.path, 'github.com', 'raw.githubusercontent.com')]"
-            },
+                "path": "[replace(variables('source').repo.path, 'github.com', 'raw.githubusercontent.com')]"
+            }
+        },
+        "custom": {
+            "uniqueId": "[parameters('unique-id')]",
             "identity": {
                 "name": "GitHub_Automation"
             },
@@ -52,8 +56,8 @@
                 "storage": {
                     "staticWebsite": {
                         "enable": {
-                            "relativePath": "wiki/cli/storage-static-website-enable.sh",
-                            "absolutePath": "[concat(variables('custom').raw.path, '/', variables('custom').repo.branch, '/', variables('custom').scripts.storage.staticWebsite.enable.relativePath)]",
+                            "name": "[concat(variables('storage').name, '-website')]",
+                            "absolutePath": "[concat(variables('assets').raw.path, '/', variables('source').repo.branch, '/wiki/cli/storage-static-website-enable.sh')]",
                             "arguments": "[concat('--name ', variables('storage').name, ' --index ', variables('site').index, ' --error ', variables('site').error)]"
                         }
                     }
@@ -80,7 +84,7 @@
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2020-10-01-preview",
+            "apiVersion": "2020-04-01-preview",
             "name": "[variables('custom').role.guid]",
             "dependsOn": [
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]"
@@ -93,7 +97,7 @@
             }
         },
         {
-            "name": "[concat(variables('storage').name, '-web')]",
+            "name": "[variables('custom').scripts.storage.staticWebsite.enable.name]",
             "type": "Microsoft.Resources/deploymentScripts",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/', variables('storage').name)]",
@@ -105,17 +109,18 @@
             "identity": {
                 "type": "userAssigned",
                 "userAssignedIdentities": {
-                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', 'dsId')]": {}
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]": {}
                 }
             },
             "properties": {
                 "forceUpdateTag": "[variables('custom').uniqueId]",
-                "azCliVersion": "2.31.0",
+                "azCliVersion": "2.30.0",
                 "arguments": "[variables('custom').scripts.storage.staticWebsite.enable.arguments]",
                 "primaryScriptUri": "[variables('custom').scripts.storage.staticWebsite.enable.absolutePath]",
                 "supportingScriptUris": [],
-                "timeout": "PT30M",
-                "cleanupPreference": "Always"
+                "timeout": "PT10M",
+                "cleanupPreference": "Always",
+                "retentionInterval": "P1D"
             }
         }
     ],

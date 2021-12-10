@@ -44,6 +44,9 @@ fi
 
 
 echo "using storage account name: "$ACCNAME
+echo "using index page name name: "$INDEXPAGE
+echo "using error page name name: "$ERRORPAGE
+
 
 echo "installing az cli storage extension"
 az extension add \

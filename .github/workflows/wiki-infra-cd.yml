@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ./.github/actions/wiki-infra-deploy.yml
+      - uses: ./.github/actions/wiki-infra-deploy
         with:
           who-to-greet: Anton
 

@@ -14,8 +14,8 @@ runs:
       uses: ./.github/actions/replace-string
       with:
         source-string: "${{ inputs.environment-name }}"
-        old-character: " "
-        new-character: "_"
+        old-substring: " "
+        new-substring: "_"
 
     - name: Deploy Resource Group template
       id: deployRG

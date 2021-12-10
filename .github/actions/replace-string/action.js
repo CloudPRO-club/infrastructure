@@ -5,7 +5,7 @@ try {
     const oldSubstring = core.getInput('old-substring');
     const newSubstring = core.getInput('new-substring');
 
-    const resultString = sourceString.replaceAll(oldSubstring, newSubstring);
+    const resultString = sourceString.replace(oldSubstring, newSubstring);
 
     core.setOutput("result-string", resultString);
 } catch (error) {

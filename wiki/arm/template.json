@@ -1,0 +1,124 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 24
+        },
+        "unique-id": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
+        },
+        "scripts-repo-path": {
+            "type": "string",
+            "defaultValue": "https://github.com/CloudPRO-club/infrastructure"
+        },
+        "scripts-repo-branch": {
+            "type": "string",
+            "defaultValue": "main"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "storage": {
+            "name": "[parameters('storage-name')]",
+            "sku": "Standard_LRS"
+        },
+        "site": {
+            "index": "index.html",
+            "error": "error.html"
+        },
+        "custom": {
+            "uniqueId": "[parameters('unique-id')]",
+            "repo": {
+                "path": "[parameters('scripts-repo-path')]",
+                "branch": "[parameters('scripts-repo-branch')]"
+            },
+            "raw": {
+                "path": "[replace(variables('custom').repo.path, 'github.com', 'raw.githubusercontent.com')]"
+            },
+            "identity": {
+                "name": "GitHub_Automation"
+            },
+            "role": {
+                "guid": "[guid(concat(resourceGroup().id, 'contributor'))]",
+                "definitions": {
+                    "contributor": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+                }
+            },
+            "scripts": {
+                "storage": {
+                    "staticWebsite": {
+                        "enable": {
+                            "relativePath": "wiki/cli/storage-static-website-enable.sh",
+                            "absolutePath": "[concat(variables('custom').raw.path, '/', variables('custom').repo.branch, '/', variables('custom').scripts.storage.staticWebsite.enable.relativePath)]",
+                            "arguments": "[concat('--name ', variables('storage').name, ' --index ', variables('site').index, ' --error ', variables('site').error)]"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('storage').name]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-06-01",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "[variables('storage').sku]"
+            },
+            "kind": "StorageV2"
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[variables('custom').identity.name]",
+            "apiVersion": "2018-11-30",
+            "location": "[variables('location')]"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-10-01-preview",
+            "name": "[variables('custom').role.guid]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('custom').role.definitions.contributor]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name), '2018-11-30').principalId]",
+                "scope": "[resourceGroup().id]",
+                "principalType": "ServicePrincipal"
+            }
+        },
+        {
+            "name": "[concat(variables('storage').name, '-web')]",
+            "type": "Microsoft.Resources/deploymentScripts",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/', variables('storage').name)]",
+                "[resourceId('Microsoft.Authorization/roleAssignments', variables('custom').role.guid)]"
+            ],
+            "apiVersion": "2020-10-01",
+            "location": "[variables('location')]",
+            "kind": "AzureCLI",
+            "identity": {
+                "type": "userAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', 'dsId')]": {}
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "[variables('custom').uniqueId]",
+                "azCliVersion": "2.31.0",
+                "arguments": "[variables('custom').scripts.storage.staticWebsite.enable.arguments]",
+                "primaryScriptUri": "[variables('custom').scripts.storage.staticWebsite.enable.absolutePath]",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "Always"
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

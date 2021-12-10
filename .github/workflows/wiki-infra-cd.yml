@@ -5,18 +5,15 @@ on:
     inputs:
       environment:
         required: true
-        description: 'Target environment for Wiki infrastructure deployment'
+        description: "Target environment for Wiki infrastructure deployment"
         type: choice
         options:
-        - 'Sandbox - Anton Boyko 01'
+        - "Sandbox - Anton Boyko 01"
 
 jobs:
-  deploy:
-    runs-on: ubuntu-20.04
-
-    wiki-infra-deploy:
-      uses: '${{ github.repository }}/.github/workflows/wiki-infra-deploy.yml@${{ github.ref_name }}'
-      with:
-        EnvironmentName: ${{ github.event.inputs.environment }}
-      secrets:
-        AzureCredentials: ${{ secrets.AZURE_CREDENTIALS }}
+  wiki-infra-deploy:
+    uses: "${{ github.repository }}/.github/workflows/wiki-infra-deploy.yml@${{ github.ref_name }}"
+    with:
+      EnvironmentName: ${{ github.event.inputs.environment }}
+    secrets:
+      AzureCredentials: ${{ secrets.AZURE_CREDENTIALS }}

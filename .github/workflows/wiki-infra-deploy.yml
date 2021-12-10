@@ -22,7 +22,7 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AzureCredentials }}
-          
+
       - name: Deploy Resource Group template
         id:   deployRG
         uses: azure/arm-deploy@v1
@@ -37,4 +37,6 @@ jobs:
           scope: resourcegroup
           resourceGroupName: ${{ steps.deployRG.outputs.name }}
           template: ./wiki/arm/resources.json
-          parameters: './wiki/arm/parameters/${{ inputs.EnvironmentName }}.json' scripts-repo-branch=${{ github.ref_name }}
+          parameters: >
+            './wiki/arm/parameters/${{ inputs.EnvironmentName }}.json'
+            scripts-repo-branch=${{ github.ref_name }}

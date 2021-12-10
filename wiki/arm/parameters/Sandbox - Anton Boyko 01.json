@@ -6,7 +6,7 @@
             "value": "Env.Sandbox.ABoyko.01"
         },
         "resource-group-location": {
-            "value": "West Europe"
+            "value": "westeurope"
         },
         "storage-name": {
             "value": "abo2021test02"

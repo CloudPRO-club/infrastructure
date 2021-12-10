@@ -1,0 +1,40 @@
+name: wiki-infra-cd
+
+on:
+  workflow_call:
+    inputs:
+      EnvironmentName:
+        required: true
+        type: string
+    secrets:
+      AzureCredentials:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    environment: ${{ inputs.EnvironmentName }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AzureCredentials }}
+          
+      - name: Deploy Resource Group template
+        id:   deployRG
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          template: ./wiki/arm/resourceGroup.json
+          parameters: './wiki/arm/parameters/${{ inputs.EnvironmentName }}.json'
+
+      - name: Deploy Resources template
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ steps.deployRG.outputs.name }}
+          template: ./wiki/arm/resources.json
+          parameters: './wiki/arm/parameters/${{ inputs.EnvironmentName }}.json' scripts-repo-branch=${{ github.ref_name }}

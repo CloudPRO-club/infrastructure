@@ -16,10 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - uses: ./.github/actions/wiki-infra-deploy
         with:
-          who-to-greet: Anton
-
+          environment-name: ${{ github.event.inputs.environment }}
 
   # wiki-infra-deploy:
   #   uses: ${{github.repository}}/.github/workflows/wiki-infra-deploy.yml@${{github.ref_name}}

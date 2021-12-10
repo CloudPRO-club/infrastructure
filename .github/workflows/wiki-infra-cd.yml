@@ -8,16 +8,11 @@ on:
         description: "Target environment for Wiki infrastructure deployment"
         type: choice
         options:
-        - "Sandbox - Anton Boyko 01"
+          - "Sandbox - Anton Boyko 01"
 
 jobs:
-  prepare:
-    runs-on: ubuntu-20.04
-    steps:
-    - run: echo ${{ github.ref_name }}
-    
   wiki-infra-deploy:
-    uses: "${{ github.repository }}/.github/workflows/wiki-infra-deploy.yml@${{ github.ref_name }}"
+    uses: ${{github.repository}}/.github/workflows/wiki-infra-deploy.yml@${{github.ref_name}}
     with:
       EnvironmentName: ${{ github.event.inputs.environment }}
     secrets:

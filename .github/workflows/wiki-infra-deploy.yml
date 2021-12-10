@@ -1,4 +1,4 @@
-name: wiki-infra-cd
+name: wiki-infra-deploy
 
 on:
   workflow_call:

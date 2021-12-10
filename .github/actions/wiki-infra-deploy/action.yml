@@ -16,7 +16,7 @@ runs:
       with:
         scope: subscription
         template: ./wiki/arm/resourceGroup.json
-        parameters: "./wiki/arm/parameters/${{ inputs.EnvironmentName }}.json"
+        parameters: "./wiki/arm/parameters/${{ inputs.environment-name }}.json"
 
     - name: Deploy Resources template
       uses: azure/arm-deploy@v1
@@ -25,5 +25,5 @@ runs:
         resourceGroupName: ${{ steps.deployRG.outputs.name }}
         template: ./wiki/arm/resources.json
         parameters: >
-          ./wiki/arm/parameters/${{ inputs.EnvironmentName }}.json'
+          ./wiki/arm/parameters/${{ inputs.environment-name }}.json'
           scripts-repo-branch=${{ github.ref_name }}

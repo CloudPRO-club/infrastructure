@@ -1,0 +1,12 @@
+{
+  "name": "replace-string",
+  "version": "1.0.0",
+  "main": "action.js",
+  "scripts": {
+    "build": "ncc build action.js --license license.txt --minify"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.6.0"
+  }
+}

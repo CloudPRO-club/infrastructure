@@ -9,6 +9,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Normalize parameters file name
+      id: normalizedFileName
+      uses: ./.github/actions/replace-string
+      with:
+        source-string: "${{ inputs.environment-name }}"
+        old-character: " "
+        new-character: "_"
 
     - name: Deploy Resource Group template
       id: deployRG
@@ -17,7 +24,7 @@ runs:
         scope: subscription
         region: eastus # will be overwritten by parameters file
         template: ./wiki/arm/resourceGroup.json
-        parameters: "./wiki/arm/parameters/${{ inputs.environment-name }}.json"
+        parameters: ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.json
 
     - name: Deploy Resources template
       uses: azure/arm-deploy@v1
@@ -26,5 +33,5 @@ runs:
         resourceGroupName: ${{ steps.deployRG.outputs.name }}
         template: ./wiki/arm/resources.json
         parameters: >
-          ./wiki/arm/parameters/${{ inputs.environment-name }}.json'
+          ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.json
           scripts-repo-branch=${{ github.ref_name }}

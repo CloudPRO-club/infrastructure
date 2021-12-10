@@ -13,9 +13,9 @@ runs:
       id: normalizedFileName
       uses: ./.github/actions/replace-string
       with:
-        source-string: ${{ inputs.environment-name }}
-        old-substring: /\s/g
-        new-substring: _
+        source-string: "${{ inputs.environment-name }}"
+        old-substring: " "
+        new-substring: "_"
 
     - name: Deploy Resource Group template
       id: deployRG

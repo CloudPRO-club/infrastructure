@@ -41,13 +41,15 @@
                 "path": "[replace(variables('source').repo.path, 'github.com', 'raw.githubusercontent.com')]"
             }
         },
+        "general": {
+            "uniqueId": "[parameters('unique-id')]"
+        },
         "custom": {
-            "uniqueId": "[parameters('unique-id')]",
             "identity": {
                 "name": "GitHub_Automation"
             },
             "role": {
-                "guid": "[guid(concat(resourceGroup().id, 'contributor'))]",
+                "guid": "[guid(variables('general').uniqueId)]",
                 "definitions": {
                     "contributor": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
                 }
@@ -113,7 +115,7 @@
                 }
             },
             "properties": {
-                "forceUpdateTag": "[variables('custom').uniqueId]",
+                "forceUpdateTag": "[variables('general').uniqueId]",
                 "azCliVersion": "2.30.0",
                 "arguments": "[variables('custom').scripts.storage.staticWebsite.enable.arguments]",
                 "primaryScriptUri": "[variables('custom').scripts.storage.staticWebsite.enable.absolutePath]",

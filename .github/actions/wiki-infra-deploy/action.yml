@@ -24,7 +24,7 @@ runs:
         scope: subscription
         region: eastus # will be overwritten by parameters file
         template: ./wiki/arm/resourceGroup.json
-        parameters: ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.json
+        parameters: ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resourceGroup.json
 
     - name: Deploy Resources template
       uses: azure/arm-deploy@v1
@@ -33,5 +33,5 @@ runs:
         resourceGroupName: ${{ steps.deployRG.outputs.name }}
         template: ./wiki/arm/resources.json
         parameters: >
-          ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.json
+          ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resources.json
           scripts-repo-branch=${{ github.ref_name }}

@@ -7,9 +7,6 @@
         },
         "resource-group-location": {
             "value": "westeurope"
-        },
-        "storage-name": {
-            "value": "abo2021test02"
         }
     }
 }

@@ -1,0 +1,37 @@
+name: "wiki-infra-deploy"
+description: "Deploy Wiki infrastructure"
+
+inputs:
+  environment-name:
+    description: "Logical name of the target Azure environment"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Normalize parameters file name
+      id: normalizedFileName
+      uses: ./.github/actions/replace-string
+      with:
+        source-string: "${{ inputs.environment-name }}"
+        old-substring: " "
+        new-substring: "_"
+
+    - name: Deploy Resource Group template
+      id: deployRG
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        region: eastus # will be overwritten by parameters file
+        template: ./wiki/arm/resourceGroup.json
+        parameters: ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resourceGroup.json
+
+    - name: Deploy Resources template
+      uses: azure/arm-deploy@v1
+      with:
+        scope: resourcegroup
+        resourceGroupName: ${{ steps.deployRG.outputs.name }}
+        template: ./wiki/arm/resources.json
+        parameters: >
+          ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resources.json
+          scripts-repo-branch=${{ github.ref_name }}

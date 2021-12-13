@@ -1,0 +1,21 @@
+name: "replace-string"
+description: "Returns a new string with all matches of a pattern replaced by a replacement"
+
+inputs:
+  source-string:
+    description: "Original string"
+    required: true
+  old-substring:
+    description: "A string that is to be replaced by 'new-substring'"
+    required: true
+  new-substring:
+    description: "The string that replaces the substring specified by the specified 'old-substring' parameter"
+    required: true
+
+outputs:
+  result-string:
+    description: "A new string with all matches of a pattern replaced by a replacement"
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

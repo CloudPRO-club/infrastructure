@@ -42,11 +42,12 @@
             }
         },
         "general": {
-            "uniqueId": "[parameters('unique-id')]"
+            "uniqueId": "[parameters('unique-id')]",
+            "id": "[uniqueString(resourceGroup().id)]"
         },
         "custom": {
             "identity": {
-                "name": "GitHub_Automation"
+                "name": "[concat('GitHub_Automation_', variables('general').id)]"
             },
             "role": {
                 "guid": "[guid(variables('general').uniqueId)]",

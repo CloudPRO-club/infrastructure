@@ -26,10 +26,3 @@ jobs:
         name: Deploy Wiki infrastructure to target environment
         with:
           environment-name: ${{ github.event.inputs.environment }}
-
-  # wiki-infra-deploy:
-  #   uses: ${{github.repository}}/.github/workflows/wiki-infra-deploy.yml@${{github.ref_name}}
-  #   with:
-  #     EnvironmentName: ${{ github.event.inputs.environment }}
-  #   secrets:
-  #     AzureCredentials: ${{ secrets.AZURE_CREDENTIALS }}

@@ -43,17 +43,12 @@
         },
         "general": {
             "uniqueId": "[parameters('unique-id')]",
-            "id": "[uniqueString(resourceGroup().id)]"
+            "id": "[uniqueString(resourceGroup().id)]",
+            "sharedRG": "Shared"
         },
         "custom": {
             "identity": {
-                "name": "[concat('GitHub_Automation_', variables('general').id)]"
-            },
-            "role": {
-                "guid": "[guid(variables('general').uniqueId)]",
-                "definitions": {
-                    "contributor": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
-                }
+                "name": "GitHub_Automation"
             },
             "scripts": {
                 "storage": {
@@ -80,31 +75,10 @@
             "kind": "StorageV2"
         },
         {
-            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-            "name": "[variables('custom').identity.name]",
-            "apiVersion": "2018-11-30",
-            "location": "[variables('location')]"
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2020-04-01-preview",
-            "name": "[variables('custom').role.guid]",
-            "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]"
-            ],
-            "properties": {
-                "roleDefinitionId": "[variables('custom').role.definitions.contributor]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name), '2018-11-30').principalId]",
-                "scope": "[resourceGroup().id]",
-                "principalType": "ServicePrincipal"
-            }
-        },
-        {
             "name": "[variables('custom').scripts.storage.staticWebsite.enable.name]",
             "type": "Microsoft.Resources/deploymentScripts",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/', variables('storage').name)]",
-                "[resourceId('Microsoft.Authorization/roleAssignments', variables('custom').role.guid)]"
+                "[resourceId('Microsoft.Storage/storageAccounts/', variables('storage').name)]"
             ],
             "apiVersion": "2020-10-01",
             "location": "[variables('location')]",
@@ -112,7 +86,7 @@
             "identity": {
                 "type": "userAssigned",
                 "userAssignedIdentities": {
-                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]": {}
+                    "[resourceID(variables('general').sharedRG, 'Microsoft.ManagedIdentity/userAssignedIdentities', variables('custom').identity.name)]": {}
                 }
             },
             "properties": {

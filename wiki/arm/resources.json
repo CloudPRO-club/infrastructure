@@ -128,5 +128,9 @@
         }
     ],
     "outputs": {
+        "website-url": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storage').name), '2021-06-01', 'Full').primaryEndpoints.web]"
+        }
     }
 }

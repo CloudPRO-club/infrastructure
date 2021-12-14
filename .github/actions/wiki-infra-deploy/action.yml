@@ -27,6 +27,7 @@ runs:
         parameters: ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resourceGroup.json
 
     - name: Deploy Resources template
+      id: deployResources
       uses: azure/arm-deploy@v1
       with:
         scope: resourcegroup
@@ -35,3 +36,7 @@ runs:
         parameters: >
           ./wiki/arm/parameters/${{ steps.normalizedFileName.outputs.result-string }}.resources.json
           scripts-repo-branch=${{ github.ref_name }}
+
+    - name: Show Wiki website URL
+      shell: bash
+      run: echo ${{ steps.deployResources.outputs.result-string }}

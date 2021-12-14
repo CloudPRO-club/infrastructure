@@ -39,4 +39,4 @@ runs:
 
     - name: Show Wiki website URL
       shell: bash
-      run: echo ${{ steps.deployResources.outputs.result-string }}
+      run: echo ${{ steps.deployResources.outputs.website-url }}

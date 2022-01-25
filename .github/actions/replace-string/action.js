@@ -5,6 +5,8 @@ try {
     let oldSubstring = core.getInput('old-substring');
     const newSubstring = core.getInput('new-substring');
 
+    // dirty fix
+    // when you will try to pass space via YAML it will treat is as an empty string
     if (!oldSubstring) {
         oldSubstring = " ";
     }
